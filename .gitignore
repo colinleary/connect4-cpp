@@ -1,1 +1,5 @@
 .vscode/*
+.depend
+connect4
+*.o
+
