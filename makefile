@@ -2,7 +2,7 @@ CXX=g++
 RM=rm -f
 CPPFLAGS=-g -Wall
 
-SRCS=connect4.cpp
+SRCS=connect4.cpp Board.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 all: connect4
