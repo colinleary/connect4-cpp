@@ -2,4 +2,6 @@
 .depend
 connect4
 *.o
-
+.lock-waf*
+out/*
+waf*/
