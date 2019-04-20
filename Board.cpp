@@ -13,35 +13,88 @@ Board::~Board()
 
 bool Board::CheckForVictory(void)
 {
-    /* Need to check up-down, left-right, down-right, down-left */
-    static const std::array<uint8_t, 4> steps = { 7, /* Up-Down */
-                                                 1, /* Left-Right */
-                                                 8, /* Down-Right */
-                                                 6, /* Down-Left */
-                                                };
-
     if( m_lastPiece == Piece::Empty) {
         return false;
     }
 
-    for (auto& step : steps) {
-        uint8_t count = 1;
-        /* We always use the last insert position as a seed */
-        uint8_t cursor = m_lastPosition - step;
-        while (cursor < m_board.size() && cursor % 7 != 6 && m_board[cursor] == m_lastPiece) {
-            ++count;
-            cursor -= step;
-        }
+    const size_t size = m_board.size();
+    const uint8_t ud_step = 7;
+    const uint8_t lr_step = 1;
+    const uint8_t dr_step = 8;
+    const uint8_t dl_step = 6;
+    uint8_t cur;
+    uint8_t count;
 
-        cursor = m_lastPosition + step;
-        while (cursor < m_board.size() && cursor % 7 != 0 && m_board[cursor] == m_lastPiece) {
-            ++count;
-            cursor += step;
-        }
+    /* Check up-down */
+    count = 1;
+    cur = m_lastPosition - ud_step;
+    while (cur < size && m_board[cur] == m_lastPiece) {
+        ++count;
+        cur -= ud_step;
+    }
 
-        if (count >= 4) {
-            return true;
-        }
+    cur = m_lastPosition + ud_step;
+    while (cur < size && m_board[cur] == m_lastPiece) {
+        ++count;
+        cur += ud_step;
+    }
+
+    if (count >= 4) {
+        return true;
+    }
+
+    /* Check left-right */
+    count = 1;
+    cur = m_lastPosition - lr_step;
+    while (cur < size && cur % 7 < 6 && m_board[cur] == m_lastPiece) {
+        ++count;
+        cur -= lr_step;
+    }
+
+    cur = m_lastPosition + lr_step;
+    while (cur < size && cur % 7 > 0 && m_board[cur] == m_lastPiece) {
+        ++count;
+        cur += lr_step;
+    }
+
+    if (count >= 4) {
+        return true;
+    }
+
+    /* Check down-right */
+    count = 1;
+    cur = m_lastPosition - dr_step;
+    while (cur < size && cur % 7 < 6 && m_board[cur] == m_lastPiece) {
+        ++count;
+        cur -= dr_step;
+    }
+
+    cur = m_lastPosition + dr_step;
+    while (cur < size && cur % 7 > 0 && m_board[cur] == m_lastPiece) {
+        ++count;
+        cur += dr_step;
+    }
+
+    if (count >= 4) {
+        return true;
+    }
+
+    /* Check down-left */
+    count = 1;
+    cur = m_lastPosition - dl_step;
+    while (cur < size && cur % 7 > 0 && m_board[cur] == m_lastPiece) {
+        ++count;
+        cur -= dl_step;
+    }
+
+    cur = m_lastPosition + dl_step;
+    while (cur < size && cur % 7 < 6 && m_board[cur] == m_lastPiece) {
+        ++count;
+        cur += dl_step;
+    }
+
+    if (count >= 4) {
+        return true;
     }
 
     return false;
@@ -62,7 +115,7 @@ bool Board::CheckForVictory(void)
  * The position must be between 0 and 6 (inclusive), and the color cannot
  * be the same color previously inserted.
 */
-bool Board::Insert(uint8_t position, Board::Piece piece)
+bool Board::Insert(uint8_t position, Piece piece)
 {
     /* Disallow insertion of two of the same color in a row */
     if (piece == m_lastPiece) {
@@ -122,6 +175,17 @@ bool Board::IsGameOver(void)
     }
 
     return m_count >= m_board.size();
+}
+
+BoardGrid Board::GetBoardGrid(void)
+{
+    BoardGrid bg = { Piece::Empty };
+
+    for (uint8_t i = 0; i < m_board.size(); ++i) {
+        bg[i / 7][i % 7] = m_board[i];
+    }
+
+    return bg;
 }
 
 /*!
