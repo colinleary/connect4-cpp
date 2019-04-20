@@ -2,12 +2,49 @@
 
 Board::Board()
   : m_lastPiece(Piece::Empty)
+  , m_count(0)
 {
     m_board.fill(Piece::Empty);
 }
 
 Board::~Board()
 {
+}
+
+bool Board::CheckForVictory(void)
+{
+    /* Need to check up-down, left-right, down-right, down-left */
+    static const std::array<uint8_t, 4> steps = { 7, /* Up-Down */
+                                                 1, /* Left-Right */
+                                                 8, /* Down-Right */
+                                                 6, /* Down-Left */
+                                                };
+
+    if( m_lastPiece == Piece::Empty) {
+        return false;
+    }
+
+    for (auto& step : steps) {
+        uint8_t count = 1;
+        /* We always use the last insert position as a seed */
+        uint8_t cursor = m_lastPosition - step;
+        while (cursor < m_board.size() && cursor % 7 != 6 && m_board[cursor] == m_lastPiece) {
+            ++count;
+            cursor -= step;
+        }
+
+        cursor = m_lastPosition + step;
+        while (cursor < m_board.size() && cursor % 7 != 0 && m_board[cursor] == m_lastPiece) {
+            ++count;
+            cursor += step;
+        }
+
+        if (count >= 4) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /*!
@@ -48,16 +85,43 @@ bool Board::Insert(uint8_t position, Board::Piece piece)
     }
 
     /* Attempt to insert the piece */
-    size_t idx = 35 + position;
+    uint8_t idx = 35 + position;
     while (idx < m_board.size()) {
         if(m_board[idx] == Piece::Empty) {
             m_board[idx] = piece;
+            m_lastPosition = idx;
+            m_lastPiece = piece;
+            ++m_count;
             return true;
         }
         idx -= 7;
     }
 
     return false;
+}
+
+/*!
+ * @brief
+ *  Checks if the game is over
+ *
+ * @return
+ *  Returns true if the game is over.
+ *
+ * The game is over if the board is full, or a player has gotten 4 in a row.
+*/
+bool Board::IsGameOver(void)
+{
+    /* Minumum 7 moves for victory */
+    if (m_count < 7) {
+        return false;
+    }
+
+    /* Check for 4 in a row */
+    if (CheckForVictory()) {
+        return true;
+    }
+
+    return m_count >= m_board.size();
 }
 
 /*!
@@ -69,7 +133,7 @@ bool Board::Insert(uint8_t position, Board::Piece piece)
  *
  * The returned string will represent a 6x7 grid.
 */
-std::string Board::Draw(void)
+std::string Board::ToString(void)
     {
     std::string result;
 

@@ -1,25 +1,22 @@
 #include <iostream>
+#include <random>
 #include "Board.h"
 
 int main(int, char**)
 {
-Board board;
-for (size_t idx = 0; idx < 6; ++idx) {
-    Board::Piece p;
-    if (idx % 2) {
-        p = Board::Piece::Red;
-    }
-    else {
-        p = Board::Piece::Black;
-    }
 
-    bool result = board.Insert(0, p);
-    std::cout << "Inserting ";
-    std::cout << (p == Board::Piece::Red ? "Red" : "Black");
-    std::cout << (result ? " succeeded" : " failed");
-    std::cout << std::endl;
+std::random_device dev;
+std::mt19937 rng(dev());
+std::uniform_int_distribution<std::mt19937::result_type> dist6(0,6);
+Board::Piece p = Board::Piece::Red;
+Board board;
+
+while(!board.IsGameOver()) {
+    if (board.Insert(static_cast<uint8_t>(dist6(rng)), p)) {
+        p = (p == Board::Piece::Red ? Board::Piece::Black : Board::Piece::Red);
+    }
 }
-std::cout << board.Draw() << std::endl;
+std::cout << board.ToString() << std::endl << std::endl;
 
 return 0;
 }

@@ -16,12 +16,16 @@ public:
     Board();
     virtual ~Board();
 
+    bool Board::CheckForVictory(void);
     bool Insert(uint8_t position, Piece piece);
-    std::string Draw(void);
+    bool IsGameOver(void);
+    std::string ToString(void);
 
 private:
     std::array<Piece, 42> m_board;
     Piece m_lastPiece;
+    uint8_t m_lastPosition;
+    uint8_t m_count;
 };
 
 #endif /* BOARD_H_ */
