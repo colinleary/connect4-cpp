@@ -1,20 +1,19 @@
 #include <iostream>
-#include <random>
 #include "Board.h"
+#include "Player.h"
+#include "RandPlayer.h"
 
 int main(int, char**)
 {
-
-std::random_device dev;
-std::mt19937 rng(dev());
-std::uniform_int_distribution<std::mt19937::result_type> dist6(0,6);
-Board::Piece p = Board::Piece::Red;
 Board board;
+Player p1(Piece::Black);
+Player p2(Piece::Red);
+bool turn = true;
 
-while(!board.IsGameOver()) {
-    if (board.Insert(static_cast<uint8_t>(dist6(rng)), p)) {
-        p = (p == Board::Piece::Red ? Board::Piece::Black : Board::Piece::Red);
-    }
+while (!board.IsGameOver()) {
+    Player& p = (turn ? p1 : p2);
+    while (!board.Insert(p.GetMove(board.GetBoardGrid()), p.GetColor()));
+    turn = !turn;
 }
 std::cout << board.ToString() << std::endl << std::endl;
 
