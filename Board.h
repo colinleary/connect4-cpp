@@ -16,7 +16,7 @@ public:
     Board();
     virtual ~Board();
 
-    bool Board::CheckForVictory(void);
+    bool CheckForVictory(void);
     bool Insert(uint8_t position, Piece piece);
     bool IsGameOver(void);
     std::string ToString(void);
