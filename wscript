@@ -22,10 +22,10 @@ def configure(conf):
         conf.env.CXXFLAGS=GXXFLAGS
 
     conf.load('compiler_cxx')
-    conf.env.SOURCES=glob.glob(SOURCES)
 
 def options(opt):
     opt.load('compiler_cxx')
 
 def build(bld):
+    bld.env.SOURCES=glob.glob(SOURCES)
     bld.program(source=bld.env.SOURCES, target='connect4')
