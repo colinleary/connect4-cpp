@@ -13,7 +13,7 @@ public:
     Piece GetColor(void);
 
 private:
-    virtual uint8_t DoGetMove(const BoardGrid& bg);
+    virtual uint8_t DoGetMove(const BoardGrid& bg) = 0;
 
 private:
     Piece m_color;

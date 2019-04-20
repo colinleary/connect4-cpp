@@ -9,7 +9,7 @@ SOURCES='*.cpp'
 MSVCFLAGS=['-W4', '-EHsc', '-Zi', '-FS']
 MSVCLFLAGS=['/DEBUG']
 GXXFLAGS=['-Wall']
-LIBS=[]
+LIBS=['ncurses']
 
 import glob
 
@@ -20,6 +20,7 @@ def configure(conf):
         conf.env.LINKFLAGS += MSVCLFLAGS
     else:
         conf.env.CXXFLAGS=GXXFLAGS
+        conf.env.LIBS += LIBS
 
     conf.load('compiler_cxx')
 
